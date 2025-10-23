@@ -48,10 +48,10 @@ selected_indicator = st.radio(
 # ======================================
 # ⚙️ 2️⃣ 가맹점 상태 파일 불러오기
 # ======================================
-BASE_DIR = os.getcwd()
+
 
 # 같은 폴더 내에 있는 CSV 파일 경로 지정
-csv_path = os.path.join(BASE_DIR, "result_prophet_storewise.csv")
+csv_path = pd.read_csv("result_prophet_storewise.csv")
 
 try:
     store_df = pd.read_csv(csv_path)
@@ -164,5 +164,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
