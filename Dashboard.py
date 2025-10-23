@@ -13,29 +13,30 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 
 # 한글 폰트 설정
 
+# 1️⃣ 시스템 폰트 디렉터리에서 나눔고딕 폰트 경로 직접 탐색
+font_paths = fm.findSystemFonts(fontpaths=['/usr/share/fonts', '/usr/local/share/fonts'])
 
-# 🔹 나눔고딕 폰트 경로 (fonts-nanum 설치 시)
-font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
-
-# 🔹 폰트 존재 여부 확인 후 등록
-if os.path.exists(font_path):
+nanum_fonts = [f for f in font_paths if 'Nanum' in f or 'nanum' in f]
+if nanum_fonts:
+    font_path = nanum_fonts[0]
     fm.fontManager.addfont(font_path)
-    plt.rcParams['font.family'] = 'NanumGothic'
+    plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
 else:
-    # fallback (Cloud에서 폰트 설치 실패 시)
+    # fallback: 기본 sans-serif
     plt.rcParams['font.family'] = 'DejaVu Sans'
 
+# 2️⃣ 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
 
-# 🔹 폰트 캐시 재생성 (Cloud 캐시 꼬임 방지)
+# 3️⃣ 캐시 재로드
 try:
     fm._rebuild()
 except Exception:
     pass
 
-# 🔹 Streamlit UI 기본 세팅
-st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
+# 4️⃣ Seaborn & Streamlit 기본 스타일
 sns.set_style("whitegrid")
+st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 # -----------------------------
 # 📌 헤더
 # -----------------------------
@@ -189,6 +190,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
