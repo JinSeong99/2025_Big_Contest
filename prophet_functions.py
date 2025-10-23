@@ -9,7 +9,7 @@ import re
 # ==========================
 # 데이터 불러오기
 # ==========================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.getcwd()
 
 # 📄 파일 경로 설정 (같은 리포지토리 내 위치)
 last_df_path = os.path.join(BASE_DIR, "KPI_file.xlsx")
@@ -178,4 +178,5 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
