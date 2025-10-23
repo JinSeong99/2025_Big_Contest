@@ -2,26 +2,35 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import os
+import matplotlib.font_manager as fm
+
 from prophet_functions import evaluate_forecast_model_prophet, last_df, threshold_df
 
 # -----------------------------
-# 📄 기본 설정
+# 📄 기본 설정 (한글 폰트 + 스타일)
 # -----------------------------
-# Cloud에 설치된 나눔고딕 경로 찾기
+
+# 한글 폰트 설정
 font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
 
-# 폰트가 실제 존재하는지 확인 후 적용
 if os.path.exists(font_path):
     fm.fontManager.addfont(font_path)
     plt.rcParams['font.family'] = 'NanumGothic'
 else:
-    # fallback: Arial로 대체 (Cloud에서 폰트 누락 시 대비)
-    plt.rcParams['font.family'] = 'Arial'
+    plt.rcParams['font.family'] = 'DejaVu Sans'  # fallback
 
 plt.rcParams['axes.unicode_minus'] = False
+
+# 폰트 캐시 강제 리빌드 (Cloud 환경에서 신규 폰트 인식 문제 해결)
+try:
+    fm._rebuild()
+except Exception:
+    pass
+
+# Streamlit 전역 설정
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 sns.set_style("whitegrid")
-
 # -----------------------------
 # 📌 헤더
 # -----------------------------
@@ -175,6 +184,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
