@@ -1,11 +1,11 @@
-fonts-nanum
-fonttools
+streamlit
+pandas
+numpy
 matplotlib
 seaborn
 prophet
-pandas
-numpy
 scikit-learn
 openpyxl
 cmdstanpy
-streamlit
+fonts-nanum
+fonttools
