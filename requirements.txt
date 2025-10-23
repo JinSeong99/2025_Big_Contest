@@ -8,6 +8,5 @@ scikit-learn
 openpyxl
 cmdstanpy
 fonttools
-pykospacing
 fonts-nanum
 
