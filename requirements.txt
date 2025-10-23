@@ -10,4 +10,4 @@ cmdstanpy
 fonttools
 pykospacing
 fonts-nanum
-os
+
