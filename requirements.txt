@@ -8,4 +8,3 @@ scikit-learn
 openpyxl
 cmdstanpy==1.1.0
 fonttools
-fonts-nanum
