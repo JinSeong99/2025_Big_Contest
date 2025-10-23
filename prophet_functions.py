@@ -9,15 +9,13 @@ import re
 # ==========================
 # 데이터 불러오기
 # ==========================
-BASE_DIR = os.getcwd()
-
-# 📄 파일 경로 설정 (같은 리포지토리 내 위치)
-last_df_path = os.path.join(BASE_DIR, "KPI_file.xlsx")
-threshold_df_path = os.path.join(BASE_DIR, "threshold.xlsx")
-
-# 엑셀 파일 불러오기
-last_df = pd.read_excel(last_df_path)
-threshold_df = pd.read_excel(threshold_df_path)
+try:
+    last_df = pd.read_excel("KPI_file.xlsx")
+    threshold_df = pd.read_excel("threshold.xlsx")
+except FileNotFoundError as e:
+    raise FileNotFoundError(
+        f"❌ 파일을 찾을 수 없습니다. 같은 폴더(main)에 KPI_file.xlsx와 threshold.xlsx가 있는지 확인하세요.\n세부 오류: {e}"
+    )
 
 threshold_df['지표'] = threshold_df['지표'].astype(str).str.replace(" ", "")
 threshold_df.set_index('지표', inplace=True)
@@ -178,5 +176,6 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
 
