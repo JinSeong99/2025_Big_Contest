@@ -13,30 +13,34 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 
 # 한글 폰트 설정
 
-# 1️⃣ 시스템 폰트 디렉터리에서 나눔고딕 폰트 경로 직접 탐색
-font_paths = fm.findSystemFonts(fontpaths=['/usr/share/fonts', '/usr/local/share/fonts'])
+FONT_FILE_NAME = 'NanumGothic.ttf' 
 
-nanum_fonts = [f for f in font_paths if 'Nanum' in f or 'nanum' in f]
-if nanum_fonts:
-    font_path = nanum_fonts[0]
-    fm.fontManager.addfont(font_path)
-    plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
-else:
-    # fallback: 기본 sans-serif
+try:
+    # 폰트 파일을 직접 로드하여 Matplotlib에 등록
+    font_prop = fm.FontProperties(fname=FONT_FILE_NAME, size=10)
+    plt.rcParams['font.family'] = font_prop.get_name()
+    print(f"✅ Matplotlib 폰트 설정 완료: {plt.rcParams['font.family']}")
+    
+except FileNotFoundError:
+    # 폰트 파일이 프로젝트 폴더에 없는 경우 (클라우드 배포 시 에러)
+    st.error(f"❌ 오류: 폰트 파일 '{FONT_FILE_NAME}'을 프로젝트 폴더에서 찾을 수 없습니다. 파일을 업로드해주세요.")
+    plt.rcParams['font.family'] = 'DejaVu Sans'
+    
+except Exception as e:
+    # 기타 폰트 등록 오류
+    print(f"❌ 폰트 등록 중 예상치 못한 오류 발생: {e}")
     plt.rcParams['font.family'] = 'DejaVu Sans'
 
-# 2️⃣ 마이너스 깨짐 방지
+
+# 2. 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
 
-# 3️⃣ 캐시 재로드
-try:
-    fm._rebuild()
-except Exception:
-    pass
-
-# 4️⃣ Seaborn & Streamlit 기본 스타일
+# 3. Seaborn 스타일 설정
 sns.set_style("whitegrid")
+
+# 4. Streamlit 페이지 설정
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
+
 # -----------------------------
 # 📌 헤더
 # -----------------------------
@@ -190,6 +194,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
