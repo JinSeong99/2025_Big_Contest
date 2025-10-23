@@ -7,5 +7,6 @@ prophet
 scikit-learn
 openpyxl
 cmdstanpy
-fonts-nanum
 fonttools
+pykospacing
+fonts-nanum
