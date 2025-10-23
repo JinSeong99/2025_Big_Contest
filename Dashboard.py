@@ -7,7 +7,17 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # -----------------------------
 # 📄 기본 설정
 # -----------------------------
-plt.rcParams['font.family'] = 'NanumGothic'
+# Cloud에 설치된 나눔고딕 경로 찾기
+font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+
+# 폰트가 실제 존재하는지 확인 후 적용
+if os.path.exists(font_path):
+    fm.fontManager.addfont(font_path)
+    plt.rcParams['font.family'] = 'NanumGothic'
+else:
+    # fallback: Arial로 대체 (Cloud에서 폰트 누락 시 대비)
+    plt.rcParams['font.family'] = 'Arial'
+
 plt.rcParams['axes.unicode_minus'] = False
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 sns.set_style("whitegrid")
@@ -165,6 +175,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
