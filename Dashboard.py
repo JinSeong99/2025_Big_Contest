@@ -12,23 +12,28 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # -----------------------------
 
 # 한글 폰트 설정
+
+
+# 🔹 나눔고딕 폰트 경로 (fonts-nanum 설치 시)
 font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
 
+# 🔹 폰트 존재 여부 확인 후 등록
 if os.path.exists(font_path):
     fm.fontManager.addfont(font_path)
     plt.rcParams['font.family'] = 'NanumGothic'
 else:
-    plt.rcParams['font.family'] = 'DejaVu Sans'  # fallback
+    # fallback (Cloud에서 폰트 설치 실패 시)
+    plt.rcParams['font.family'] = 'DejaVu Sans'
 
 plt.rcParams['axes.unicode_minus'] = False
 
-# 폰트 캐시 강제 리빌드 (Cloud 환경에서 신규 폰트 인식 문제 해결)
+# 🔹 폰트 캐시 재생성 (Cloud 캐시 꼬임 방지)
 try:
     fm._rebuild()
 except Exception:
     pass
 
-# Streamlit 전역 설정
+# 🔹 Streamlit UI 기본 세팅
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 sns.set_style("whitegrid")
 # -----------------------------
@@ -184,6 +189,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
