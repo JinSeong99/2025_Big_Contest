@@ -12,33 +12,48 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # -----------------------------
 
 # 한글 폰트 설정
+import os
+import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 
-FONT_FILE_NAME = 'NanumGothic.ttf' 
+# ======================================
+# ✅ 폰트 설정 (NanumGothic-Regular.ttf)
+# ======================================
+
+FONT_FILE_NAME = 'NanumGothic-Regular.ttf'
+FONT_PATH = os.path.join(os.getcwd(), FONT_FILE_NAME)
 
 try:
-    # 폰트 파일을 직접 로드하여 Matplotlib에 등록
-    font_prop = fm.FontProperties(fname=FONT_FILE_NAME, size=10)
-    plt.rcParams['font.family'] = font_prop.get_name()
-    print(f"✅ Matplotlib 폰트 설정 완료: {plt.rcParams['font.family']}")
-    
-except FileNotFoundError:
-    # 폰트 파일이 프로젝트 폴더에 없는 경우 (클라우드 배포 시 에러)
-    st.error(f"❌ 오류: 폰트 파일 '{FONT_FILE_NAME}'을 프로젝트 폴더에서 찾을 수 없습니다. 파일을 업로드해주세요.")
+    # 1️⃣ 폰트 파일이 실제 존재하는지 확인
+    if os.path.exists(FONT_PATH):
+        font_prop = fm.FontProperties(fname=FONT_PATH)
+        fm.fontManager.addfont(FONT_PATH)
+        plt.rcParams['font.family'] = font_prop.get_name()
+        print(f"✅ Matplotlib 폰트 설정 완료: {plt.rcParams['font.family']}")
+    else:
+        raise FileNotFoundError(f"'{FONT_FILE_NAME}' 파일을 찾을 수 없습니다.")
+
+except FileNotFoundError as e:
+    # ⚠️ 파일이 없을 경우 Streamlit에 표시 + fallback
+    st.error(f"❌ 오류: {e}")
     plt.rcParams['font.family'] = 'DejaVu Sans'
-    
+
 except Exception as e:
-    # 기타 폰트 등록 오류
-    print(f"❌ 폰트 등록 중 예상치 못한 오류 발생: {e}")
+    # ⚠️ 기타 폰트 등록 예외 처리
+    st.error(f"❌ 폰트 등록 중 예상치 못한 오류 발생: {e}")
     plt.rcParams['font.family'] = 'DejaVu Sans'
 
-
-# 2. 마이너스 깨짐 방지
+# 2️⃣ 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
 
-# 3. Seaborn 스타일 설정
+# 3️⃣ 스타일 설정
 sns.set_style("whitegrid")
 
-# 4. Streamlit 페이지 설정
+# 4️⃣ Streamlit 페이지 설정
+st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
+
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 
 # -----------------------------
@@ -194,6 +209,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
