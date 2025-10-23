@@ -7,8 +7,8 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # -----------------------------
 # 📄 기본 설정
 # -----------------------------
-plt.rcParams['font.family'] = 'Malgun Gothic'  # 윈도우 기본 한글 폰트
-plt.rcParams['axes.unicode_minus'] = False 
+plt.rcParams['font.family'] = 'NanumGothic'
+plt.rcParams['axes.unicode_minus'] = False
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 sns.set_style("whitegrid")
 
@@ -51,7 +51,8 @@ selected_indicator = st.radio(
 
 
 # 같은 폴더 내에 있는 CSV 파일 경로 지정
-csv_path = pd.read_csv("result_prophet_storewise.csv")
+csv_path = "result_prophet_storewise.csv"  
+
 
 try:
     store_df = pd.read_csv(csv_path)
@@ -164,6 +165,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
