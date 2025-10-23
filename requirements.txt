@@ -1,12 +1,11 @@
 streamlit
 pandas
-numpy
+numpy==1.26.4
 matplotlib
 seaborn
 prophet
 scikit-learn
 openpyxl
-cmdstanpy
+cmdstanpy==1.1.0
 fonttools
 fonts-nanum
-
