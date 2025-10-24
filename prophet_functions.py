@@ -6,6 +6,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 
+FONT_FILE_NAME = "NanumGothic-Regular.ttf"  # Dashboard.py와 같은 폴더에 있어야 함
+if os.path.exists(FONT_FILE_NAME):
+    try:
+        fm.fontManager.addfont(FONT_FILE_NAME)
+        plt.rcParams["font.family"] = "NanumGothic"
+        print("✅ 한글 폰트 설정 완료: NanumGothic")
+    except Exception as e:
+        print(f"⚠️ 폰트 등록 중 오류: {e}")
+        plt.rcParams["font.family"] = "DejaVu Sans"
+else:
+    print(f"⚠️ '{FONT_FILE_NAME}' 파일을 찾을 수 없습니다. 기본 폰트로 대체합니다.")
+    plt.rcParams["font.family"] = "DejaVu Sans"
+
+plt.rcParams["axes.unicode_minus"] = False
+sns.set_style("whitegrid")
 # ==========================
 # 데이터 불러오기
 # ==========================
@@ -176,6 +191,7 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
 
 
