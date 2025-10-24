@@ -11,28 +11,19 @@ import requests  # 🔹 추가 (GitHub에서 폰트 다운로드용)
 # =====================================
 # 🔤 NanumGothic 폰트 GitHub에서 불러오기
 # =====================================
-FONT_URL = "https://raw.githubusercontent.com/naver/nanumfont/master/NanumGothic.ttf"
-FONT_PATH = "/tmp/NanumGothic.ttf"  # Cloud 임시 폴더에 저장
+# 🔹 Cloud 환경에 설치된 나눔고딕 경로
+font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
 
-try:
-    # 🔹 폰트 파일 다운로드
-    if not os.path.exists(FONT_PATH):
-        r = requests.get(FONT_URL)
-        r.raise_for_status()
-        with open(FONT_PATH, "wb") as f:
-            f.write(r.content)
-
-    # 🔹 Matplotlib에 등록
-    fm.fontManager.addfont(FONT_PATH)
+if os.path.exists(font_path):
+    fm.fontManager.addfont(font_path)
     plt.rcParams["font.family"] = "NanumGothic"
-    # 캐시 재빌드 (안정성 향상)
-    fm._rebuild()
-    print("✅ NanumGothic 폰트 등록 완료 (from GitHub)")
-    
-except Exception as e:
-    # ⚠️ NameError 발생을 막기 위해 st.error를 제거하고 print로 대체합니다.
-    print(f"⚠️ 폰트 로드 실패 (Matplotlib), 기본 폰트로 대체: {e}")
+    print("✅ NanumGothic 폰트 설정 완료 (시스템 폰트 사용)")
+else:
     plt.rcParams["font.family"] = "DejaVu Sans"
+    print("⚠️ NanumGothic 경로 없음, 기본 폰트로 대체")
+
+plt.rcParams["axes.unicode_minus"] = False
+sns.set_style("whitegrid")
 
 
 
@@ -206,6 +197,7 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
 
 
