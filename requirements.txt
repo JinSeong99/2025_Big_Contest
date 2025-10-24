@@ -7,6 +7,5 @@ prophet
 scikit-learn
 openpyxl
 cmdstanpy
-requests
+fonts-nanum
 fonttools
-matplotlib-inline
