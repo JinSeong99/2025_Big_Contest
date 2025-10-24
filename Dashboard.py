@@ -22,38 +22,28 @@ import matplotlib.font_manager as fm
 # ✅ 폰트 설정 (NanumGothic-Regular.ttf)
 # ======================================
 
-FONT_FILE_NAME = 'NanumGothic-Regular.ttf'
-FONT_PATH = os.path.join(os.getcwd(), FONT_FILE_NAME)
+ASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FONT_FILE_NAME = "NanumGothic-Regular.ttf"
+FONT_PATH = os.path.join(BASE_DIR, FONT_FILE_NAME)
 
 try:
-    # 1️⃣ 폰트 파일이 실제 존재하는지 확인
     if os.path.exists(FONT_PATH):
-        font_prop = fm.FontProperties(fname=FONT_PATH)
         fm.fontManager.addfont(FONT_PATH)
-        plt.rcParams['font.family'] = font_prop.get_name()
-        print(f"✅ Matplotlib 폰트 설정 완료: {plt.rcParams['font.family']}")
+        plt.rcParams["font.family"] = "NanumGothic"
+        print(f"✅ Matplotlib 폰트 설정 완료: NanumGothic")
     else:
-        raise FileNotFoundError(f"'{FONT_FILE_NAME}' 파일을 찾을 수 없습니다.")
-
-except FileNotFoundError as e:
-    # ⚠️ 파일이 없을 경우 Streamlit에 표시 + fallback
-    st.error(f"❌ 오류: {e}")
-    plt.rcParams['font.family'] = 'DejaVu Sans'
-
+        raise FileNotFoundError(f"'{FONT_PATH}' 파일이 존재하지 않습니다.")
 except Exception as e:
-    # ⚠️ 기타 폰트 등록 예외 처리
-    st.error(f"❌ 폰트 등록 중 예상치 못한 오류 발생: {e}")
-    plt.rcParams['font.family'] = 'DejaVu Sans'
+    st.warning(f"⚠️ 폰트 로드 실패: {e}")
+    plt.rcParams["font.family"] = "DejaVu Sans"
 
-# 2️⃣ 마이너스 깨짐 방지
-plt.rcParams['axes.unicode_minus'] = False
-
-# 3️⃣ 스타일 설정
+# 마이너스 깨짐 방지
+plt.rcParams["axes.unicode_minus"] = False
 sns.set_style("whitegrid")
 
-# 4️⃣ Streamlit 페이지 설정
-st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
-
+# ======================================
+# 🖥️ 2️⃣ Streamlit 페이지 설정
+# ======================================
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
 
 # -----------------------------
@@ -209,6 +199,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
