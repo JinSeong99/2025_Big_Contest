@@ -12,19 +12,15 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # -----------------------------
 
 # 한글 폰트 설정
-import os
-import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
+
 
 # ======================================
 # ✅ 폰트 설정 (NanumGothic-Regular.ttf)
 # ======================================
 
-ASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ✅ 먼저 정의
 FONT_FILE_NAME = "NanumGothic-Regular.ttf"
-FONT_PATH = os.path.join(BASE_DIR, FONT_FILE_NAME)
+FONT_PATH = os.path.join(BASE_DIR, FONT_FILE_NAME)     # ✅ 그다음에 사용
 
 try:
     if os.path.exists(FONT_PATH):
@@ -37,14 +33,13 @@ except Exception as e:
     st.warning(f"⚠️ 폰트 로드 실패: {e}")
     plt.rcParams["font.family"] = "DejaVu Sans"
 
-# 마이너스 깨짐 방지
+# 2️⃣ 마이너스 깨짐 방지 및 스타일
 plt.rcParams["axes.unicode_minus"] = False
 sns.set_style("whitegrid")
 
-# ======================================
-# 🖥️ 2️⃣ Streamlit 페이지 설정
-# ======================================
+# 3️⃣ Streamlit 페이지 설정
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
+
 
 # -----------------------------
 # 📌 헤더
@@ -199,6 +194,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
