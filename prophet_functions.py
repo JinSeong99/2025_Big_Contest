@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import re
-
+import os
 FONT_FILE_NAME = "NanumGothic-Regular.ttf"  # Dashboard.py와 같은 폴더에 있어야 함
 if os.path.exists(FONT_FILE_NAME):
     try:
@@ -191,6 +191,7 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
 
 
