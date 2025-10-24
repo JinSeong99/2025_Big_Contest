@@ -18,24 +18,20 @@ from prophet_functions import evaluate_forecast_model_prophet, last_df, threshol
 # ✅ 폰트 설정 (NanumGothic-Regular.ttf)
 # ======================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ✅ 먼저 정의
 FONT_FILE_NAME = "NanumGothic-Regular.ttf"
-FONT_PATH = os.path.join(BASE_DIR, FONT_FILE_NAME)     # ✅ 그다음에 사용
 
 try:
-    if os.path.exists(FONT_PATH):
-        fm.fontManager.addfont(FONT_PATH)
-        plt.rcParams["font.family"] = "NanumGothic"
-        print(f"✅ Matplotlib 폰트 설정 완료: NanumGothic")
-    else:
-        raise FileNotFoundError(f"'{FONT_PATH}' 파일이 존재하지 않습니다.")
+    fm.fontManager.addfont(FONT_FILE_NAME)   # ✅ 같은 폴더에 있으므로 경로 불필요
+    plt.rcParams["font.family"] = "NanumGothic"
+    print("✅ Matplotlib 폰트 설정 완료: NanumGothic")
 except Exception as e:
     st.warning(f"⚠️ 폰트 로드 실패: {e}")
     plt.rcParams["font.family"] = "DejaVu Sans"
 
-# 2️⃣ 마이너스 깨짐 방지 및 스타일
+# 마이너스 깨짐 방지
 plt.rcParams["axes.unicode_minus"] = False
 sns.set_style("whitegrid")
+
 
 # 3️⃣ Streamlit 페이지 설정
 st.set_page_config(page_title="KPI 예측 대시보드", layout="wide")
@@ -194,6 +190,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
