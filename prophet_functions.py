@@ -186,16 +186,16 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
         # ✅ Save results
         results.append({
-            "Model": "Prophet",
-            "Indicator": english_title,
-            "Forecast Mean": y_pred.mean(),
-            "MAE": mae,
-            "RMSE": rmse,
-            "MAPE(%)": mape,
-            "Warning Threshold": warn_th,
-            "Danger Threshold": danger_th,
-            "fig": fig
-        })
+        "모델": "Prophet",
+        "지표": english_title,
+        "예측 평균": y_pred.mean(),
+        "MAE": mae,
+        "RMSE": rmse,
+        "MAPE(%)": mape,
+        "경고임계치": warn_th,
+        "위험임계치": danger_th,
+        "fig": fig
+    })
 
     # If no results
     if not results:
@@ -207,6 +207,7 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)} KPI forecasts completed (English only)")
     return pd.DataFrame(results)
+
 
 
 
