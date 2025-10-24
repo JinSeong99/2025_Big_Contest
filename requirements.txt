@@ -5,7 +5,7 @@ matplotlib
 seaborn
 prophet
 scikit-learn
-openpyxl
+
 cmdstanpy
 fonts-nanum
 fonttools
