@@ -84,19 +84,19 @@ def evaluate_forecast(y_true, y_pred):
 # ==========================
 def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, pre_close_months=6):
     """
-    Prophet 기반 시계열 예측 (생존 + 폐업 전 구간 포함)
-    - last_df: 가맹점별 지표 및 폐업여부 포함
-    - 각 지표별 Prophet 학습 → 예측 → 임계치 비교 및 시각화
+    Prophet-based time-series forecasting (with English-only visualization)
+    - last_df: merchant KPI data
+    - threshold_df: threshold values per KPI
     """
 
     df = last_df.copy()
     df["ds"] = pd.to_datetime(df["기준년월"], format="%Y%m")
 
-    # 생존 / 폐업 데이터 분리
+    # Split alive and closed merchants
     alive_df = df[df["폐업여부"] == 0].copy()
     closed_df = df[df["폐업여부"] == 1].copy()
 
-    # 폐업 매장: 폐업 전 n개월만 포함
+    # Keep only last n months for closed stores
     closed_pre = (
         closed_df.sort_values(["가맹점구분번호", "ds"])
         .groupby("가맹점구분번호", group_keys=False)
@@ -106,37 +106,35 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
     total_df = pd.concat([alive_df, closed_pre], axis=0).reset_index(drop=True)
     total_df = total_df.sort_values(["가맹점구분번호", "ds"])
 
+    # KPI list
     indicators = ["매출안정성지표", "경쟁우위 지표", "고객 충성도 지표"]
     results = []
 
-    # ==============================
-    # Prophet 학습 및 예측 (지표별)
-    # ==============================
     for target in indicators:
         key = _norm(target)
         matched_idx = _idx_map.get(key, None)
 
         if matched_idx is None:
-            print(f"⚠️ 임계치 테이블에서 '{target}'(정규화='{key}') 찾지 못함 → 스킵")
+            print(f"⚠️ Could not find threshold for '{target}' (normalized='{key}') → skipped")
             continue
 
-        # 컬럼 존재 확인
+        # Column check
         if target not in total_df.columns:
             alt = [c for c in total_df.columns if _norm(c) == key]
             if alt:
                 target = alt[0]
             else:
-                print(f"⚠️ last_df에 '{target}' 컬럼이 없어 스킵합니다.")
+                print(f"⚠️ '{target}' not found in last_df → skipped")
                 continue
 
         sub = total_df[["ds", target]].dropna().sort_values("ds").copy()
         if len(sub) < 10:
-            print(f"⚠️ '{target}' 데이터가 충분하지 않아 스킵합니다. (len={len(sub)})")
+            print(f"⚠️ Not enough data for '{target}' (len={len(sub)}) → skipped")
             continue
 
         prophet_df = sub.rename(columns={target: "y"})
 
-        # Prophet 모델 생성 및 학습
+        # Prophet model
         m = Prophet(
             yearly_seasonality=True,
             weekly_seasonality=False,
@@ -145,58 +143,71 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
         )
         m.fit(prophet_df)
 
+        # Forecast
         future = m.make_future_dataframe(periods=forecast_months, freq="MS")
         forecast = m.predict(future)
 
-        # 성능 계산
+        # Evaluation
         y_true = prophet_df["y"].iloc[-min(forecast_months, len(prophet_df)):]
         y_pred = forecast["yhat"].iloc[-min(forecast_months, len(forecast)):]
         mae, rmse, mape = evaluate_forecast(y_true, y_pred)
 
-        # 임계치 값 읽기 (float 변환 보장)
+        # Thresholds
         warn_th = float(threshold_df.loc[matched_idx, warn_col])
         danger_th = float(threshold_df.loc[matched_idx, danger_col])
 
-        # 시각화
+        # ==============================
+        # 🎨 Visualization (English only)
+        # ==============================
         fig, ax = plt.subplots(figsize=(10, 5))
-        ax.plot(forecast["ds"], forecast["yhat"], color="#1f77b4", label="예측 추세")
-        ax.axhline(y=warn_th, color="orange", linestyle="--", label=f"경고 {warn_th:.3f}")
-        ax.axhline(y=danger_th, color="red", linestyle="--", label=f"위험 {danger_th:.3f}")
+        ax.plot(forecast["ds"], forecast["yhat"], color="#1f77b4", label="Predicted Trend")
+        ax.axhline(y=warn_th, color="orange", linestyle="--", label=f"Warning {warn_th:.3f}")
+        ax.axhline(y=danger_th, color="red", linestyle="--", label=f"Danger {danger_th:.3f}")
         ax.axvspan(
             forecast["ds"].iloc[-forecast_months],
             forecast["ds"].iloc[-1],
             color="khaki",
             alpha=0.2
         )
-        ax.set_title(f"📈 {target} Prophet 예측")
-        ax.set_xlabel("기준년월")
-        ax.set_ylabel(target)
+
+        # English titles / labels
+        english_title = {
+            "매출안정성지표": "Sales Stability Index",
+            "경쟁우위 지표": "Competitive Advantage Index",
+            "고객 충성도 지표": "Customer Loyalty Index"
+        }.get(target, target)
+
+        ax.set_title(f"📈 {english_title} (Prophet Forecast)")
+        ax.set_xlabel("Month")
+        ax.set_ylabel("KPI Value")
         ax.legend()
         ax.grid(alpha=0.3)
         plt.tight_layout()
 
-        # ✅ Streamlit 환경에서 표시할 수 있게 반환
+        # ✅ Save results
         results.append({
-            "모델": "Prophet",
-            "지표": target,
-            "예측 평균": y_pred.mean(),
+            "Model": "Prophet",
+            "Indicator": english_title,
+            "Forecast Mean": y_pred.mean(),
             "MAE": mae,
             "RMSE": rmse,
             "MAPE(%)": mape,
-            "경고임계치": warn_th,
-            "위험임계치": danger_th,
-            "fig": fig  #장
+            "Warning Threshold": warn_th,
+            "Danger Threshold": danger_th,
+            "fig": fig
         })
 
-    # 빈 결과 방지
+    # If no results
     if not results:
-        print("⚠️ 예측 결과가 비어 있습니다. (데이터 또는 임계치 불일치 가능)")
+        print("⚠️ No forecast results available.")
         return pd.DataFrame(columns=[
-            "모델", "지표", "예측 평균", "MAE", "RMSE", "MAPE(%)", "경고임계치", "위험임계치"
+            "Model", "Indicator", "Forecast Mean", "MAE", "RMSE", "MAPE(%)",
+            "Warning Threshold", "Danger Threshold"
         ])
 
-    print(f"✅ {len(results)}개의 지표 예측 완료")
+    print(f"✅ {len(results)} KPI forecasts completed (English only)")
     return pd.DataFrame(results)
+
 
 
 
