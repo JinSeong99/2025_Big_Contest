@@ -199,14 +199,15 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     # If no results
     if not results:
-        print("⚠️ No forecast results available.")
-        return pd.DataFrame(columns=[
-            "Model", "Indicator", "Forecast Mean", "MAE", "RMSE", "MAPE(%)",
-            "Warning Threshold", "Danger Threshold"
-        ])
+        print("⚠️ 예측 결과가 없습니다. (데이터 또는 임계치 불일치 가능)")
+         return pd.DataFrame(columns=[
+        "모델", "지표", "예측 평균", "MAE", "RMSE", "MAPE(%)",
+        "경고 임계치", "위험 임계치"
+    ])
 
     print(f"✅ {len(results)} KPI forecasts completed (English only)")
     return pd.DataFrame(results)
+
 
 
 
