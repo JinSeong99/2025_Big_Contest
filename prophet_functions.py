@@ -30,16 +30,11 @@ try:
     print("✅ NanumGothic 폰트 등록 완료 (from GitHub)")
     
 except Exception as e:
-    st.error(f"⚠️ 폰트 로드 실패, 기본 폰트로 대체됩니다. 오류: {e}")
-    print(f"⚠️ 폰트 로드 실패, 기본 폰트로 대체: {e}")
+    # ⚠️ NameError 발생을 막기 위해 st.error를 제거하고 print로 대체합니다.
+    print(f"⚠️ 폰트 로드 실패 (Matplotlib), 기본 폰트로 대체: {e}")
     plt.rcParams["font.family"] = "DejaVu Sans"
 
 
-# 2. 마이너스 깨짐 방지
-plt.rcParams['axes.unicode_minus'] = False
-
-# 3. Seaborn 스타일 설정
-sns.set_style("whitegrid")
 
 # ==========================
 # 데이터 불러오기
@@ -211,6 +206,7 @@ def evaluate_forecast_model_prophet(last_df, threshold_df, forecast_months=10, p
 
     print(f"✅ {len(results)}개의 지표 예측 완료")
     return pd.DataFrame(results)
+
 
 
 
